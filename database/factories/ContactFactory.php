@@ -18,7 +18,7 @@ class ContactFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'user_id' => User::all()->random()->id,
             'name' => fake()->name(),
             'phone' => fake()->phoneNumber(),
             'email' => fake()->email(),

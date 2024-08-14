@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('contacts.index')" :active="request()->routeIs('contacts.index')">
                         {{ __('My Contacts') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
+                        {{ __('Contacts book') }}
+                    </x-nav-link>
                 </div>
             </div>
 

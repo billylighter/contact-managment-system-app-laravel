@@ -1,22 +1,82 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('My Contacts') }}
-            </h2>
-            <a href="{{route('contacts.create')}}"
-               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                {{__('Add new contact')}}
-            </a>
-        </div>
-    </x-slot>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <title>{{ config('app.name', 'Laravel') }}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet"/>
+
+    <!-- Scripts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="font-sans antialiased bg-gray-100">
+
+<div class="min-h-full">
+    <nav class="bg-gray-800">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <img class="h-8 w-8" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                             alt="Your Company">
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+                            <a href="{{route('home')}}"
+                               class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
+                               aria-current="page">
+                                {{__('Contacts book')}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    @if (Route::has('login'))
+
+                        @auth
+                            <a href="{{ url('/dashboard') }}"
+                               class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</a>
+                        @else
+                            <a href="{{ route('login') }}"
+                               class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Log
+                                in</a>
+
+                            @if (Route::has('register'))
+                                <a href="{{ route('register') }}"
+                                   class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</a>
+                            @endif
+                        @endauth
+
+                    @endif
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Mobile menu, show/hide based on menu state. -->
+
+    </nav>
+
+    <header class="bg-white shadow">
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900">
+                {{__('Contacts book')}}
+            </h1>
+        </div>
+    </header>
     <main>
         <div class="py-12">
+
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="shadow-sm sm:rounded-lg">
-
-                    <form action="{{route('contacts.index')}}" method="GET"
+                    <form action="{{route('home')}}" method="GET"
                           class="flex max-w-2xl mx-auto mb-10 bg-gray-800 px-20 py-5">
 
                         <div class="relative z-0 w-full mb-5 group">
@@ -54,9 +114,6 @@
                                     <th scope="col" class="px-6 py-3">
                                         {{__('Phone')}}
                                     </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        {{__('Actions')}}
-                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -73,24 +130,9 @@
                                         <td class="px-6 py-4">
                                             {{$contact->phone}}
                                         </td>
-                                        <td class="flex pt-3">
-
-                                            <a href="{{ route('contacts.edit', $contact) }}"
-                                               class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900">
-                                                {{ __('Edit') }}
-                                            </a>
-                                            <form method="POST" action="{{ route('contacts.destroy', $contact) }}">
-                                                @csrf
-                                                @method('delete')
-                                                <button
-                                                    class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
-                                                    {{ __('Delete') }}
-                                                </button>
-                                            </form>
-
-                                        </td>
                                     </tr>
                                 @endforeach
+
 
                                 </tbody>
                             </table>
@@ -98,13 +140,16 @@
 
                     {{$contacts->links()}}
 
+
                     @else
 
-                        <div
-                            class="text-center p-8 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
-                            role="alert">
-                            {{__('Your list is empty.')}}
-                        </div>
+                        <tr>
+                            <div
+                                class="text-center p-8 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
+                                role="alert">
+                                {{__('Your list is empty.')}}
+                            </div>
+                        </tr>
 
                     @endif
 
@@ -112,4 +157,7 @@
             </div>
         </div>
     </main>
-</x-app-layout>
+</div>
+
+</body>
+</html>

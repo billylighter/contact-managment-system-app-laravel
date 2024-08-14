@@ -12,9 +12,18 @@ class ContactController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $contacts = Contact::where('user_id' , Auth::id())->paginate(20);
+
+        $title = $request->input('title');
+
+        $contacts = Contact::where('user_id', Auth::id())
+            ->where(function ($query) use ($title) {
+                $query->where('name', 'LIKE', "%$title%")
+                    ->orWhere('email', 'LIKE', "%$title%")
+                    ->orWhere('phone', 'LIKE', "%$title%");
+            })
+            ->paginate(20);
 
         return view('contacts.index', [
             'contacts' => $contacts
@@ -37,7 +46,7 @@ class ContactController extends Controller
         $validated = $request->validate( [
             'name' => ['string', 'max:127'],
             'email' => ['email', 'max:255'],
-            'phone' => ['numeric']
+            'phone' => ['string']
         ]);
 
         $request->user()->contacts()->create($validated);
